@@ -1,20 +1,41 @@
-import numpy as np
-import tsplib95
-from typing import List, Dict
-from src.domain.utils import (
-    get_distance_matrix,
+"""
+Main script for comparing TSP solvers.
+"""
+
+import time
+from typing import Dict
+
+from src.domain.solver import (
+    FastTspSolver,
+    GoogleORToolsSolver,
+    LinKernighanSolver,
+    PyVrpSolver,
+    TravelingRustlingSolver,
+)
+from src.data.tsplib_loader import (
     get_all_instance_names,
+    load_problem_with_optimal_length,
+    get_distance_matrix,
     get_tour_length,
 )
-from src.domain.solver import GoogleORToolsSolver, LinKernighanSolver, PyVrpSolver
-import time
-import os
-import csv
-from datetime import datetime
+from src.results.results_manager import ResultsManager
+from config import MAX_PROBLEM_SIZE, NUMBER_OF_RUNS
 
 
 def run_solvers(problem, distance_matrix, solvers, runs=1, optimal_length=None):
+    """
+    Run multiple solvers on a TSP instance and collect results.
 
+    Args:
+        problem: The TSP problem instance
+        distance_matrix: The distance matrix for the problem
+        solvers: Dictionary of solvers {name: solver_instance}
+        runs: Number of times to run each solver
+        optimal_length: The optimal tour length (if known)
+
+    Returns:
+        Dictionary of results for each solver
+    """
     results = {name: {"lengths": [], "times": []} for name in solvers}
 
     for name, solver in solvers.items():
@@ -49,109 +70,53 @@ def run_solvers(problem, distance_matrix, solvers, runs=1, optimal_length=None):
     return results
 
 
-def write_to_file_and_console(message, file_handler):
-    """Write a message to both console and file."""
-    print(message)
-    file_handler.write(message + "\n")
-
-
 def main():
-    # Create a results directory if it doesn't exist
-    results_dir = os.path.join(os.path.dirname(__file__), "results")
-    os.makedirs(results_dir, exist_ok=True)
-
-    # Create a timestamp for the results files
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_file = os.path.join(results_dir, f"tsp_results_{timestamp}.txt")
-    csv_file = os.path.join(results_dir, f"tsp_results_{timestamp}.csv")
-
+    """Main function to run the TSP solver comparison."""
     # Initialize solvers
     solvers = {
-        "or_tools": GoogleORToolsSolver(),
-        "python_tsp": LinKernighanSolver(),
-        "pyvrp": PyVrpSolver(),
+        # "traveling_rustling": TravelingRustlingSolver(),
+        # "or_tools": GoogleORToolsSolver(),
+        # "python_tsp": LinKernighanSolver(),
+        # "pyvrp": PyVrpSolver(),
+        "fast-tsp": FastTspSolver(),
     }
 
-    # Create CSV file with headers
-    with open(csv_file, "w", newline="") as csvf:
-        fieldnames = ["instance_name", "dimension", "optimal_length"]
+    # Initialize results manager
+    results_manager = ResultsManager()
+    results_manager.initialize_csv(list(solvers.keys()))
 
-        # Add solver-specific columns
-        for solver_name in solvers.keys():
-            fieldnames.extend(
-                [
-                    f"{solver_name}_avg_length",
-                    f"{solver_name}_avg_time",
-                    f"{solver_name}_gap",
-                ]
-            )
+    # Open text file for results
+    text_file = results_manager.open_text_file()
 
-        writer = csv.DictWriter(csvf, fieldnames=fieldnames)
-        writer.writeheader()
+    # Get all problem instances within size limit
+    for problem_name in get_all_instance_names(MAX_PROBLEM_SIZE):
+        # Load problem and its optimal tour
+        problem, optimal_length = load_problem_with_optimal_length(problem_name)
+        distance_matrix = get_distance_matrix(problem)
 
-    # Continue with regular text output
-    with open(results_file, "w") as f:
-        write_to_file_and_console(f"TSP Solver Comparison Results - {timestamp}", f)
-        write_to_file_and_console("=" * 50, f)
+        # Run the solvers
+        results = run_solvers(
+            problem=problem,
+            distance_matrix=distance_matrix,
+            solvers=solvers,
+            runs=NUMBER_OF_RUNS,
+            optimal_length=optimal_length,
+        )
 
-        for problem_name in get_all_instance_names():
-            problem = tsplib95.load(f"./data/tsplib/symmetric_tsp/{problem_name}.tsp")
-            if problem.dimension > 100:
-                continue
+        # Add result to manager
+        results_manager.add_result(
+            instance_name=problem_name,
+            dimension=problem.dimension,
+            optimal_length=optimal_length,
+            solver_results=results,
+            file_handle=text_file,
+        )
 
-            write_to_file_and_console(f"\nProblem: {problem_name}", f)
-            write_to_file_and_console("-" * 30, f)
+    # Close text file
+    results_manager.close_text_file(text_file)
 
-            distance_matrix = get_distance_matrix(problem)
-            opt = tsplib95.load(f"./data/tsplib/symmetric_tsp/{problem_name}.opt.tour")
-            optimal_length = get_tour_length(problem, opt.tours[0])
-            write_to_file_and_console(f"Optimal tour length: {optimal_length}", f)
-
-            # Run the solvers
-            results = run_solvers(
-                problem=problem,
-                distance_matrix=distance_matrix,
-                solvers=solvers,
-                runs=1,
-                optimal_length=optimal_length,
-            )
-
-            # Prepare CSV row
-            csv_row = {
-                "instance_name": problem_name,
-                "dimension": problem.dimension,
-                "optimal_length": optimal_length,
-            }
-
-            # Print results for each solver
-            for name, result in results.items():
-                write_to_file_and_console(f"\n{name.upper()} RESULTS:", f)
-                write_to_file_and_console(
-                    f"  Average length: {result['avg_length']:.2f}", f
-                )
-                write_to_file_and_console(
-                    f"  Average time: {result['avg_time']:.4f} seconds", f
-                )
-
-                # Add to CSV row
-                csv_row[f"{name}_avg_length"] = round(result["avg_length"], 2)
-                csv_row[f"{name}_avg_time"] = round(result["avg_time"], 4)
-
-                if result["gap"] is not None:
-                    write_to_file_and_console(
-                        f"  Optimality gap: {result['gap']:.2f}%", f
-                    )
-                    csv_row[f"{name}_gap"] = round(result["gap"], 2)
-                else:
-                    csv_row[f"{name}_gap"] = None
-
-            # Append row to CSV
-            with open(csv_file, "a", newline="") as csvf:
-                writer = csv.DictWriter(csvf, fieldnames=fieldnames)
-                writer.writerow(csv_row)
-
-        write_to_file_and_console("\nResults saved to: " + results_file, f)
-        write_to_file_and_console("CSV results saved to: " + csv_file, f)
+    # Generate summary plots
+    results_manager.generate_summary_plots()
 
 
 if __name__ == "__main__":

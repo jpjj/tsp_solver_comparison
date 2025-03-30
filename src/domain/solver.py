@@ -5,6 +5,8 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 from python_tsp.heuristics import solve_tsp_record_to_record
 import pyvrp
+import traveling_rustling
+import fast_tsp
 
 
 class Solver(ABC):
@@ -106,3 +108,29 @@ class PyVrpSolver(Solver):
         stopping_criterion = pyvrp.stop.MaxRuntime(max_runtime=n // 10)
         res = model.solve(stop=stopping_criterion, display=False)
         return [0] + res.best.routes()[0].visits()
+
+
+class TravelingRustlingSolver(Solver):
+    """TSP solver implementation using Traveling Rustling."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        n = len(distance_matrix)
+        """Solve TSP using Traveling Rustling library."""
+        solution = traveling_rustling.solve(
+            distance_matrix,
+            time_limit=n // 10,
+        )
+        return solution.route
+
+
+class FastTspSolver(Solver):
+    """TSP solver implementation using FastTSP."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        """Solve TSP using FastTSP library."""
+        n = len(distance_matrix)
+        solution = fast_tsp.find_tour(
+            distance_matrix,
+            # n // 10,
+        )
+        return solution
