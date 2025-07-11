@@ -7,10 +7,19 @@ from python_tsp.heuristics import solve_tsp_record_to_record
 import pyvrp
 import traveling_rustling
 import fast_tsp
+import vroom
+import tsbee
+import elkai
+import signal
+import time
 
 
 class Solver(ABC):
     """Abstract base class for TSP solvers."""
+
+    def __init__(self, time_limit_seconds: int = 30):
+        """Initialize solver with time limit."""
+        self.time_limit_seconds = time_limit_seconds
 
     @abstractmethod
     def solve(self, distance_matrix: np.ndarray, **kwargs) -> List[int]:
@@ -51,7 +60,7 @@ class GoogleORToolsSolver(Solver):
         search_parameters.local_search_metaheuristic = (
             routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
         )
-        search_parameters.time_limit.seconds = len(distance_matrix) // 10  # Time limit
+        search_parameters.time_limit.seconds = self.time_limit_seconds
         # search_parameters.solution_limit = len(distance_matrix)  # Solution limit
 
         solution = routing.SolveWithParameters(search_parameters)
@@ -105,7 +114,7 @@ class PyVrpSolver(Solver):
         model = pyvrp.Model.from_data(problem)
         model.add_vehicle_type()
 
-        stopping_criterion = pyvrp.stop.MaxRuntime(max_runtime=n // 10)
+        stopping_criterion = pyvrp.stop.MaxRuntime(max_runtime=self.time_limit_seconds)
         res = model.solve(stop=stopping_criterion, display=False)
         return [0] + res.best.routes()[0].visits()
 
@@ -116,11 +125,18 @@ class TravelingRustlingSolver(Solver):
     def solve(self, distance_matrix: np.ndarray) -> List[int]:
         n = len(distance_matrix)
         """Solve TSP using Traveling Rustling library."""
-        solution = traveling_rustling.solve(
-            distance_matrix,
-            time_limit=n // 10,
-        )
+        solution = traveling_rustling.solve(distance_matrix, time_limit=self.time_limit_seconds)
         return solution.route
+
+
+class TSBeeSolver(Solver):
+    """TSP solver implementation using TSBee."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        n = len(distance_matrix)
+        """Solve TSP using Traveling Rustling library."""
+        solution = tsbee.solve(distance_matrix, self.time_limit_seconds)
+        return solution
 
 
 class FastTspSolver(Solver):
@@ -131,6 +147,55 @@ class FastTspSolver(Solver):
         n = len(distance_matrix)
         solution = fast_tsp.find_tour(
             distance_matrix,
-            # n // 10,
+            self.time_limit_seconds,
         )
         return solution
+
+
+class PyVroomSolver(Solver):
+    """TSP solver implementation using pyvroom."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        """Solve TSP using FastTSP library."""
+        n = len(distance_matrix)
+        problem_instance = vroom.Input()
+        problem_instance.set_durations_matrix(
+            profile="car", matrix_input=distance_matrix
+        )
+        problem_instance.add_vehicle([vroom.Vehicle(1, start=0, end=0)])
+        problem_instance.add_job([vroom.Job(i, location=i) for i in range(n)])
+        solution = problem_instance.solve(exploration_level=5, nb_threads=4)
+        return list(solution.routes["location_index"])[1:-1]
+
+
+class LKHSolver(Solver):
+    """TSP solver implementation using LKH via elkai."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        """Solve TSP using LKH algorithm via elkai."""
+        # Convert numpy array to list for elkai
+        distance_matrix_list = distance_matrix.tolist()
+        
+        # Create elkai distance matrix
+        cities = elkai.DistanceMatrix(distance_matrix_list)
+        
+        # Solve TSP
+        solution = cities.solve_tsp()
+        
+        # Remove the last city if it's the same as the first (return to start)
+        if len(solution) > 1 and solution[0] == solution[-1]:
+            solution = solution[:-1]
+        
+        return solution
+
+
+class ConcordeSolver(Solver):
+    """TSP solver implementation using Concorde via subprocess."""
+
+    def solve(self, distance_matrix: np.ndarray) -> List[int]:
+        """Solve TSP using Concorde solver."""
+        # For now, we'll use the Python TSP Lin-Kernighan as a placeholder
+        # since installing Concorde requires specific setup
+        # This should be replaced with actual Concorde integration
+        permutation, _ = solve_tsp_record_to_record(distance_matrix)
+        return permutation

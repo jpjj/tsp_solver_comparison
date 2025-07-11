@@ -139,6 +139,20 @@ wheels = [
 ]
 
 [[package]]
+name = "elkai"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/90/0e/2de87c0770f9939fd4fe6ac5419976e29652e1b409803fae600ea2d328b4/elkai-2.0.1.tar.gz", hash = "sha256:1d8204b85fc960d2619c280e6143b14c1b62e09c532b388fff51e40e18404ba4", size = 227659 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/cc/0c591bcb33bf8b7968ad9fb4b7707786eeace03fef9a109839b022a94c81/elkai-2.0.1-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:ad27a437b57d7ed26212447099062b713352897307f2ea1c990874151a63bc7f", size = 185016 },
+    { url = "https://files.pythonhosted.org/packages/ed/0b/5812f89c74c9391b94362115a3f3a908b62aa1eb5754d9769c308b900c04/elkai-2.0.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f32a4cf5f0d42024d7b537699a57e055be2c2d99b5edcff1d69a77761ce07b43", size = 218122 },
+    { url = "https://files.pythonhosted.org/packages/2c/37/0228f2cc9d2cea79e870460c3197931ab9e7256e88d4d5439e34f620b33d/elkai-2.0.1-cp312-cp312-win_amd64.whl", hash = "sha256:b8e17561bed5d5da93a4c0a68639994ccc1c855ecec2e9dc9be6fa5663a3f5fc", size = 158751 },
+    { url = "https://files.pythonhosted.org/packages/89/00/2e6c2c0240b98c841143bb31b3af068b02213ca9618bca4267defa55d18e/elkai-2.0.1-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:1244b650bcbabec90f3c5b599f6b8334dfbc8a4b5c222131300b5b27d93b0639", size = 185019 },
+    { url = "https://files.pythonhosted.org/packages/5d/80/789fa4b8c7b3b847ab8995c6b93ca8ab31a655b5874c7226bcdfcef82a5c/elkai-2.0.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:83f4c113d0385112b3339c7233be261c11a855ba8f0c16e5970a16748305d06d", size = 218127 },
+    { url = "https://files.pythonhosted.org/packages/32/2d/e8392313affd2fab42127dc7d761e63acfbbfe8d48535a129c773e00c3bc/elkai-2.0.1-cp313-cp313-win_amd64.whl", hash = "sha256:af646a5400dea7133a9ba93119f27f1a1c1ff1635844a12b0762cdd88e2ea5a8", size = 158744 },
+]
+
+[[package]]
 name = "fast-tsp"
 version = "0.1.4"
 source = { registry = "https://pypi.org/simple" }
@@ -501,6 +515,23 @@ wheels = [
 ]
 
 [[package]]
+name = "pyvroom"
+version = "1.14.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pandas" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/07/7f/5b151bcf6a1cc785298f6c66587375da23a7e5383a5dc2e365de75d815b1/pyvroom-1.14.0.tar.gz", hash = "sha256:97bfa9ba9afda322eb16d7b3d8e5f6564cc98b8d20f35ef1dec288eb452bf436", size = 36463 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/2e/9e4bbf7e67477e4a99a5249ae8924e8df2b45bd623d0d15c8d8dc717ceee/pyvroom-1.14.0-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:e591076c3c15a866b9696a7002d61e17c91138d86e9a643729dec1c902040b77", size = 3422038 },
+    { url = "https://files.pythonhosted.org/packages/a3/e6/16c384711758139428fa70f6a1e3b420f3a20941e9ce274a23bffe86200d/pyvroom-1.14.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:81502b5b0f418a7150b4407e2ba11f9d7e8d66235b202af901fc5f4a200e962d", size = 3103919 },
+    { url = "https://files.pythonhosted.org/packages/68/86/708588bc7e779b08a943cf232afc5ac01a751728818405c5cea365a0ac83/pyvroom-1.14.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:ae431500b28db2659461dd06a37d8c7fcfaac9192cb8d3cef134394c99d88bc5", size = 2454254 },
+    { url = "https://files.pythonhosted.org/packages/3b/ea/e1de438dded6db46ba55f45624860c65074e6ce490ef7981cd358ab84e53/pyvroom-1.14.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:4661d8b95311e41988dc7f717ec3f5dfbc34c7ab743081736838f29a7db6185e", size = 2602276 },
+    { url = "https://files.pythonhosted.org/packages/7f/7d/3455ab4e71dd53fb042eff0693a15ea142e3b8da5fee565260d58d57d29b/pyvroom-1.14.0-cp312-cp312-win_amd64.whl", hash = "sha256:4cf4eec4e75fdd8dd7874c1792cde97c18f9d18e9a37978b37bb93ec878ffcfc", size = 1781829 },
+]
+
+[[package]]
 name = "pyvrp"
 version = "0.10.1"
 source = { registry = "https://pypi.org/simple" }
@@ -559,6 +590,20 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/3a/a647fa4f316482dacf2fd68e8a386327a33d6eabd8eb2f9a0c3d291ec549/ruff-0.11.2-py3-none-win32.whl", hash = "sha256:aca01ccd0eb5eb7156b324cfaa088586f06a86d9e5314b0eb330cb48415097cc", size = 10319835 },
     { url = "https://files.pythonhosted.org/packages/86/54/3c12d3af58012a5e2cd7ebdbe9983f4834af3f8cbea0e8a8c74fa1e23b2b/ruff-0.11.2-py3-none-win_amd64.whl", hash = "sha256:3170150172a8f994136c0c66f494edf199a0bbea7a409f649e4bc8f4d7084080", size = 11373713 },
     { url = "https://files.pythonhosted.org/packages/d6/d4/dd813703af8a1e2ac33bf3feb27e8a5ad514c9f219df80c64d69807e7f71/ruff-0.11.2-py3-none-win_arm64.whl", hash = "sha256:52933095158ff328f4c77af3d74f0379e34fd52f175144cefc1b192e7ccd32b4", size = 10441990 },
+]
+
+[[package]]
+name = "seaborn"
+version = "0.13.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/86/59/a451d7420a77ab0b98f7affa3a1d78a313d2f7281a57afb1a34bae8ab412/seaborn-0.13.2.tar.gz", hash = "sha256:93e60a40988f4d65e9f4885df477e2fdaff6b73a9ded434c1ab356dd57eefff7", size = 1457696 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/83/11/00d3c3dfc25ad54e731d91449895a79e4bf2384dc3ac01809010ba88f6d5/seaborn-0.13.2-py3-none-any.whl", hash = "sha256:636f8336facf092165e27924f223d3c62ca560b1f2bb5dff7ab7fad265361987", size = 294914 },
 ]
 
 [[package]]
@@ -667,22 +712,34 @@ name = "tsp-solver-comparison"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "elkai" },
     { name = "fast-tsp" },
+    { name = "matplotlib" },
+    { name = "numpy" },
     { name = "ortools" },
     { name = "python-tsp" },
+    { name = "pyvroom" },
     { name = "pyvrp" },
     { name = "ruff" },
+    { name = "seaborn" },
     { name = "traveling-rustling" },
+    { name = "tsplib95" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "elkai", specifier = ">=0.2.0" },
     { name = "fast-tsp", specifier = ">=0.1.4" },
+    { name = "matplotlib", specifier = ">=3.7.0" },
+    { name = "numpy", specifier = ">=1.24.0" },
     { name = "ortools", specifier = ">=9.12.4544" },
     { name = "python-tsp", specifier = ">=0.5.0" },
+    { name = "pyvroom", specifier = ">=1.14.0" },
     { name = "pyvrp", specifier = ">=0.10.1" },
     { name = "ruff", specifier = ">=0.11.2" },
+    { name = "seaborn", specifier = ">=0.13.2" },
     { name = "traveling-rustling", specifier = ">=0.1.1" },
+    { name = "tsplib95", specifier = ">=0.7.0" },
 ]
 
 [[package]]
